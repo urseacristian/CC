@@ -1,0 +1,54 @@
+<mat-toolbar color="primary">
+  <span>ResumeBuilder</span>
+  <span class="spacer"></span>
+  <ng-container *ngIf="isLoggedIn; else notLoggedIn">
+    <span>Bine ai venit, {{ email }}!</span>
+    <button mat-button (click)="logout()">Logout</button>
+  </ng-container>
+  <ng-template #notLoggedIn>
+    <button mat-button routerLink="/login">Login</button>
+    <button mat-raised-button color="primary" routerLink="/sign-up">Sign up</button>
+  </ng-template>
+</mat-toolbar>
+
+<div class="home-container">
+  <h1>Free Online Resume Builder</h1>
+  <button
+    mat-raised-button
+    color="primary"
+    routerLink="/generate-resume"
+    [disabled]="!isLoggedIn"
+  >
+    Build my resume
+  </button>
+  <button
+    mat-raised-button
+    color="accent"
+    routerLink="/view-cvs"
+    [disabled]="!isLoggedIn"
+  >
+    View My Resumes
+  </button>
+</div>
+
+<div class="blue-section">
+  <div class="features">
+    <div class="feature-item">
+      <mat-icon color="primary">check_circle</mat-icon>
+      <span>Easy to create and customize</span>
+    </div>
+    <div class="feature-item">
+      <mat-icon color="primary">dashboard</mat-icon>
+      <span>Modern templates and layouts</span>
+    </div>
+    <div class="feature-item">
+      <mat-icon color="primary">format_paint</mat-icon>
+      <span>Professionally designed and formatted</span>
+    </div>
+  </div>
+  <p class="description">
+    With ResumeBuilder's free resume builder, applying for your dream job is
+    easy and fast. Choose from our free templates and customize your resume
+    within a few clicks.
+  </p>
+</div>
