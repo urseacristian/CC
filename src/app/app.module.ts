@@ -7,7 +7,6 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { CoreModule } from './core/core.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { MocksModule } from './mocks/mocks.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +18,6 @@ import { MocksModule } from './mocks/mocks.module';
     CoreModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    MocksModule
   ],
   providers: [
     provideClientHydration(withEventReplay()),
