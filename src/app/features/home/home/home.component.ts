@@ -16,8 +16,13 @@ export class HomeComponent implements OnInit {
   constructor(private backendService: BackendService, private router: Router) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = false;
-    this.email = null;
+    this.backendService.isLoggedIn$.subscribe((loggedIn) => {
+      this.isLoggedIn = loggedIn;
+    });
+
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as { email: string };
+    this.email = state?.email || null;
   }
 
   login(email: string, password: string): void {

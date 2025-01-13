@@ -23,26 +23,15 @@ export class LoginComponent {
       password: ['', Validators.required],
     });
   }
-
   onSubmit(): void {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      this.backendService.loginUser({ email, password }).subscribe({
-        next: (response) => {
-          if (response) {
-            this.router.navigate(['/home'], {
-              state: { email },
-            });
-            this.loginError = null;
-          } else {
-            this.loginError = 'Invalid credentials';
-          }
-        },
-        error: (err) => {
-          console.error(err);
-          this.loginError = 'Login failed. Please try again later.';
-        },
+      this.backendService.setLoggedIn(true); 
+      this.router.navigate(['/home'], {
+        state: { email },
       });
     }
   }
+  
+  
 }
