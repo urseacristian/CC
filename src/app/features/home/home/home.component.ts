@@ -1,6 +1,6 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { BackendService } from '../../../service/services/backend.service'; 
 
 @Component({
   selector: 'app-home',
@@ -11,24 +11,36 @@ import { Router } from '@angular/router';
 export class HomeComponent implements OnInit {
   isLoggedIn: boolean = false;
   email: string | null = null;
+  loginError: string | null = null;
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: Object, 
-    private router: Router
-  ) {}
+  constructor(private backendService: BackendService, private router: Router) {}
 
   ngOnInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.isLoggedIn = localStorage.getItem('isLogged') === 'true';
-      this.email = localStorage.getItem('email');
-    }
+    this.isLoggedIn = false;
+    this.email = null;
+  }
+
+  login(email: string, password: string): void {
+    this.backendService.loginUser({ email, password }).subscribe({
+      next: (isLoggedIn) => {
+        if (isLoggedIn) {
+          this.isLoggedIn = true;
+          this.email = email;
+          this.loginError = null;
+        } else {
+          this.isLoggedIn = false;
+          this.loginError = 'Autentificare eșuată. Verificați datele introduse.';
+        }
+      },
+      error: (err) => {
+        this.isLoggedIn = false;
+        this.loginError = 'Eroare la conectare. Încercați din nou mai târziu.';
+        console.error('Eroare:', err);
+      },
+    });
   }
 
   logout(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('isLogged');
-      localStorage.removeItem('email');
-    }
     this.isLoggedIn = false;
     this.email = null;
     this.router.navigate(['/login']);

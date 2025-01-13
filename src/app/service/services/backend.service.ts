@@ -6,32 +6,34 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class BackendService {
-  private baseUrl = 'http://localhost:8080';
+  private authUrl = 'http://auth-generator:9091/auth';
+  private cvGeneratorUrl = 'http://cv-generator:9092/cv';
+  // private authUrl = 'http://localhost:9091/auth';
+  // private cvGeneratorUrl = 'http://localhost:9092/cv';
 
   constructor(private http: HttpClient) {}
 
   loginUser(credentials: { email: string; password: string }): Observable<boolean> {
-    return this.http.post<boolean>(`${this.baseUrl}/login_user`, credentials);
+    return this.http.post<boolean>(`${this.authUrl}/login_user`, credentials);
   }
 
   signUpUser(data: { email: string; password: string }): Observable<boolean> {
-    return this.http.post<boolean>(`${this.baseUrl}/sign_up_user`, data);
+    return this.http.post<boolean>(`${this.authUrl}/sign_up_user`, data);
   }
 
   generateCv(cvData: any): Observable<Blob> {
-    return this.http.post(`${this.baseUrl}/generate_cv`, cvData, { responseType: 'blob' });
+    return this.http.post(`${this.cvGeneratorUrl}/generate_cv`, cvData, { responseType: 'blob' });
   }
 
   viewResume(email: string): Observable<{ id: string; date: string }[]> {
-    const params = new HttpParams().set('email', email);
-    return this.http.get<{ id: string; date: string }[]>(`${this.baseUrl}/view_resume`, { params });
+    return this.http.post<{ id: string; date: string }[]>(`${this.cvGeneratorUrl}/view_resume`, { email });
   }
 
   downloadCv(cvId: string): Observable<Blob> {
-    return this.http.get(`${this.baseUrl}/download_cv?id=${cvId}`, { responseType: 'blob' });
+    return this.http.post(`${this.cvGeneratorUrl}/download_cv`, { id: cvId }, { responseType: 'blob' });
   }
 
   deleteCv(cvId: string): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.baseUrl}/delete_cv?id=${cvId}`);
+    return this.http.post<boolean>(`${this.cvGeneratorUrl}/delete_cv`, { id: cvId });
   }
 }
