@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BackendService } from '../../service/services/backend.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-view-cvs',
@@ -10,27 +11,32 @@ import { BackendService } from '../../service/services/backend.service';
 export class ViewCvsComponent implements OnInit {
   cvs: { id: string; date: string }[] = [];
   displayedColumns: string[] = ['id', 'date', 'actions'];
+  email: string | null = null;
 
-  constructor(private backendService: BackendService) {}
+  constructor(private backendService: BackendService, private router: Router) {}
 
   ngOnInit(): void {
-    this.fetchCVs();
+    const navigation = this.router.getCurrentNavigation();
+    const state = navigation?.extras.state as { email: string };
+    this.email = state?.email || null;
+
+    if (this.email) {
+      this.fetchCVs(this.email);
+    } else {
+      console.error('Email is not provided. Redirecting to login.');
+      this.router.navigate(['/login']);
+    }
   }
 
-  fetchCVs(): void {
-    const email = localStorage.getItem('email');
-    if (email) {
-      this.backendService.viewResume(email).subscribe({
-        next: (data) => {
-          this.cvs = data;
-        },
-        error: (err) => {
-          console.error(err);
-        },
-      });
-    } else {
-      console.error('No email found in localStorage');
-    }
+  fetchCVs(email: string): void {
+    this.backendService.viewResume(email).subscribe({
+      next: (data) => {
+        this.cvs = data;
+      },
+      error: (err) => {
+        console.error(err);
+      },
+    });
   }
 
   downloadCV(cvId: string): void {

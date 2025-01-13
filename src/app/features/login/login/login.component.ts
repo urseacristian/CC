@@ -7,10 +7,11 @@ import { BackendService } from '../../../service/services/backend.service';
   selector: 'app-login',
   standalone: false,
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  loginError: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -29,17 +30,17 @@ export class LoginComponent {
       this.backendService.loginUser({ email, password }).subscribe({
         next: (response) => {
           if (response) {
-            localStorage.setItem('isLogged', 'true');
-            localStorage.setItem('email', email);
-            this.router.navigate(['/home']);
-            console.log({ email, password })
-          } else { 
-            alert('Invalid credentials');
+            this.router.navigate(['/home'], {
+              state: { email },
+            });
+            this.loginError = null;
+          } else {
+            this.loginError = 'Invalid credentials';
           }
         },
         error: (err) => {
           console.error(err);
-          alert('Login failed');
+          this.loginError = 'Login failed. Please try again later.';
         },
       });
     }
